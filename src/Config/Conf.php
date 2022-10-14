@@ -1,5 +1,4 @@
 <?php
-namespace App\Covoiturage\Config;
 class Conf {
 
     static private array $databases = array(
@@ -8,16 +7,16 @@ class Conf {
         //
         // ou webinfo.iutmontp.univ-montp2.fr
         // pour accéder à webinfo depuis l'extérieur
-        'hostname' => 'root',
+        'hostname' => 'lucky.db.elephantsql.com',
         // A l'IUT, vous avez une BDD nommee comme votre login
         // Sur votre machine, vous devrez creer une BDD
-        'database' => 'saes3a01',
+        'database' => 'yhyayoup',
         // A l'IUT, c'est votre login
         // Sur votre machine, vous avez surement un compte 'root'
-        'login' => 'root',
+        'login' => 'yhyayoup',
         // A l'IUT, c'est votre mdp (INE par defaut)
         // Sur votre machine personelle, vous avez creez ce mdp a l'installation
-        'password' => '1234'
+        'password' => 'SfPcwfddmzZO-CBXuWYpUqg4Q6-IdS_j'
     );
 
     static public function getLogin() : string {
