@@ -1,10 +1,10 @@
 <?php
 
-require_once "src/Config/Conf.php";
+namespace App\Vote\Model\Repository;
 
-class Model{
+class DatabaseConnection{
     private  PDO $pdo;
-    private static ?Model $instance = null;
+    private static ?DatabaseConnection $instance = null;
 
     /**
      * @param $pdo
@@ -33,12 +33,12 @@ class Model{
         return static::getInstance()->pdo;
     }
 
-    private static function getInstance() : Model {
+    private static function getInstance() : DatabaseConnection {
         // L'attribut statique $pdo s'obtient avec la syntaxe static::$pdo
         // au lieu de $this->pdo pour un attribut non statique
         if (is_null(static::$instance))
             // Appel du constructeur
-            static::$instance = new Model();
+            static::$instance = new DatabaseConnection();
         return static::$instance;
     }
 

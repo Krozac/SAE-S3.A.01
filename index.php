@@ -1,11 +1,11 @@
 <?php
 
-require_once "src/Model/Model.php";
+require_once "src/Model/DatabaseConnection.php";
 $pagetitle = "index";
 $cheminVueBody = "Acceuil/acceuil.php";
-if (Model::getPDO()!= NULL){
+if (DatabaseConnection::getPDO()!= NULL){
     echo "<p>connexion à la base de donnée confirmée</p>";
-    $pdoStatement = Model::getPdo()->query('SELECT * FROM utilisateur WHERE id = 0');
+    $pdoStatement = DatabaseConnection::getPdo()->query('SELECT * FROM utilisateur WHERE id = 0');
     $tab = $pdoStatement->fetch();
     foreach ($tab as $var){
         echo $var . "    ";
