@@ -53,7 +53,7 @@ foreach ($messages as $message) {
 ?>
 </div>
 <form class="zoneTexte" method="post" action="index.php?action=created&controller=message">
-    <input type="hidden" name="idContact" value="<?= $_GET['idContact'] ?>">
+    <input type="hidden" name="idContact" value="<?php echo htmlspecialchars($_GET['idContact']) ?>">
     <p class="champ">
         <label for="message_id">Message : </label>
         <textarea id="message_id" maxlength="350" name="message" rows="7" cols="50" required> </textarea>

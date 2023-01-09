@@ -108,10 +108,10 @@ if (isset($_GET['selection'])) {
             }
             echo '</p>';
         }
-        if ($question->aPassePhase() && !$question->estDernierePhase() || ($question->getPhase() != 'debut' && $question->getPhase() != 'fini')) {
+        if ($question->aPassePhase() || ($question->getPhase() != 'debut' && $question->getPhase() != 'fini')) {
             echo '<a class = "link-custom" style = "position:absolute; " href ="index.php?action=readAll&controller=proposition&idQuestion=' . $idQuestionURL . '">Liste des propositions</a>';
         }
-        if ($question->getPhase() == 'ecriture' && ConnexionUtilisateur::estConnecte() &&
+        if (!$question->aPassePhase() && $question->getPhase() == 'ecriture' && ConnexionUtilisateur::estConnecte() &&
             Responsable::estResponsable($question, ConnexionUtilisateur::getLoginUtilisateurConnecte())
             && !Responsable::aCreeProposition($question, ConnexionUtilisateur::getLoginUtilisateurConnecte())) {
             echo '<a class = "link-custom" style = "position:absolute; margin-top:25px" href ="index.php?action=create&controller=proposition&idQuestion=' . $idQuestionURL . '">Créer une proposition</a>';

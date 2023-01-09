@@ -28,12 +28,12 @@ if (isset($_POST['titre'])) {
 <h2>Description : <?= htmlspecialchars($question->getDescription()) ?></h2>
 
 <form method="post" class="custom-form">
-    <p>
-        <label for="titre_id">Titre de votre proposition </label>
-        <input type="text" maxlength="500" id="titre_id" size="80"
+    <p class="InputAddOn">
+        <label class="InputAddOn-item" for="titre_id">Titre de votre proposition </label>
+        <input class="InputAddOn-field" type="text" maxlength="480" id="titre_id" size="80"
                value="<?= FormConfig::TextField('titre') ?> " <?= $readOnly ?>
                name="titre">
-        <label>480 caractères maximum</label>
+        <label class="maximum">480 caractères maximum</label>
     </p>
     <!--<h2>Désigner les co-auteurs qui vous aideront à rédiger votre proposition :</h2>-->
 
@@ -47,9 +47,9 @@ if (isset($_POST['titre'])) {
         echo '<p>Description : ' . htmlspecialchars($section->getDescription()) . ' </p > ';
         echo '
     <p class="champ">
-        <label for=contenu_id> Contenu</label > :
-        <textarea name=contenu' . $section->getId() . ' id = contenu_id maxlength=1500 rows = 8 cols = 80 >' . FormConfig::TextField('contenu' . $section->getId()) . '</textarea >
-        <label>1400 caractères maximum</label>
+        <label class="InputAddOn-item" for=contenu_id> Contenu : </label > 
+        <textarea name=contenu' . $section->getId() . ' id = contenu_id maxlength=1400 rows = 8 cols = 80 >' . FormConfig::TextField('contenu' . $section->getId()) . '</textarea >
+        <label class="maximum">1400 caractères maximum</label>
     </p> ';
     }
     ?>

@@ -131,6 +131,10 @@ class ControllerUtilisateur
         } else if (Utilisateur::identifiantExiste($_POST['identifiant'])) {
             MessageFlash::ajouter('warning', 'Cet identifiant existe déjà');
             Controller::redirect('index.php?controller=utilisateur&action=create');
+        } else if (strlen($_POST['identifiant']) > 30 || strlen($_POST['nom']) > 30 || strlen($_POST['prenom']) > 30 ||
+            strlen($_POST['mdp']) > 256 || strlen($_POST['mdp2']) > 256 || strlen($_POST['email']) > 256) {
+            MessageFlash::ajouter('danger', 'Vous n\'avez pas respecté les contraintes');
+            Controller::redirect('index.php?controller=utilisateur&action=create');
         } else {
             $utilisateur = Utilisateur::construireDepuisFormulaire($_POST);
             try {
@@ -253,6 +257,11 @@ class ControllerUtilisateur
             MessageFlash::ajouter('info', 'Votre mot de passe doit contenir au moins 6 caractères.');
             Controller::redirect('index.php?controller=utilisateur&action=update&idUtilisateur=' . $utilisateur->getIdentifiant());
         }
+        if (strlen($_POST['identifiant']) > 30 || strlen($_POST['nom']) > 30 || strlen($_POST['prenom']) > 30 ||
+            strlen($_POST['mdp']) > 256 || strlen($_POST['mdp2']) > 256 || strlen($_POST['email']) > 256) {
+            MessageFlash::ajouter('danger', 'Vous n\'avez pas respecté les contraintes');
+            Controller::redirect('index.php?controller=utilisateur&action=create');
+        }
         $bool = false;
         for ($i = 0; $i < 10 && !$bool; $i++) {
             if (strpos($_POST['mdp'], $i)) {
@@ -324,22 +333,29 @@ class ControllerUtilisateur
             Controller::afficheVue('view.php', ["pagetitle" => "Demande de confirmation ",
                 "cheminVueBody" => "confirm.php",
                 "url" => "index.php?action=delete&controller=utilisateur&idUtilisateur=" . $_GET['idUtilisateur'],
+                "mdp" => true,
                 "message" => $message]);
         } else if (isset($_POST["cancel"])) {
             if (ConnexionUtilisateur::getLoginUtilisateurConnecte() == $_GET['idUtilisateur']) {
-                Controller::redirect("index.php?controller=utilisateur&action=read");
+                Controller::redirect("index.php?controller=utilisateur&action=read&idUtilisateur=" . $_GET['idUtilisateur']);
             } else {
                 Controller::redirect("index.php?controller=utilisateur&action=readAll");
             }
         } else if (isset($_POST["confirm"])) {
-            (new UtilisateurRepository())->delete($_GET['idUtilisateur']);
-            if (ConnexionUtilisateur::getLoginUtilisateurConnecte() == $_GET['idUtilisateur']) {
-                MessageFlash::ajouter('success', "Votre compte a bien été supprimé");
-                ConnexionUtilisateur::deconnecter();
-                Controller::redirect("index.php?controller=accueil");
+            $utilisateur = (new UtilisateurRepository())->select($_GET['idUtilisateur']);
+            if (!MotDePasse::verifier($_POST['mdp'], $utilisateur->getMdpHache())) {
+                MessageFlash::ajouter('warning', 'Mot de passe incorrect.');
+                Controller::redirect("index.php?action=delete&controller=utilisateur&idUtilisateur=" . $_GET['idUtilisateur']);
             } else {
-                MessageFlash::ajouter('success', "Ce compte a bien été supprimé");
-                Controller::redirect("index.php?controller=utilisateur&action=readAll");
+                (new UtilisateurRepository())->delete($_GET['idUtilisateur']);
+                if (ConnexionUtilisateur::getLoginUtilisateurConnecte() == $_GET['idUtilisateur']) {
+                    MessageFlash::ajouter('success', "Votre compte a bien été supprimé");
+                    ConnexionUtilisateur::deconnecter();
+                    Controller::redirect("index.php?controller=accueil");
+                } else {
+                    MessageFlash::ajouter('success', "Ce compte a bien été supprimé");
+                    Controller::redirect("index.php?controller=utilisateur&action=readAll");
+                }
             }
         }
     }

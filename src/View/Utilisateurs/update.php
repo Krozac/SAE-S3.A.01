@@ -15,40 +15,40 @@ use App\Vote\Lib\ConnexionUtilisateur;
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="username">Identifiant : </label>
             <input class="InputAddOn-field" type="text" value="'. htmlspecialchars($utilisateur->getIdentifiant()) .'" name="identifiant"
-                   id="username"
+                   id="username" maxlength="30"
                    readonly required>
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="lastname">Nom&#42; : </label>
             <input class="InputAddOn-field" type="text" value="'.  htmlspecialchars($utilisateur->getNom()) .'" name="nom" id="lastname"
-                   required>
+                   maxlength="30" required> 
             <span class="validity"></span>
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="firstname">Prénom&#42; : </label>
             <input class="InputAddOn-field" type="text" value="'.  htmlspecialchars($utilisateur->getPrenom()) .'" name="prenom"
-                   id="firstname" required>
+                   id="firstname" maxlength="30" required>
             <span class="validity"></span>
 
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="mail">Email : </label>
             <input class="InputAddOn-field" type="text" value="'.  htmlspecialchars($utilisateur->getEmail()) .'" name="mail"
-                   id="mail" required>
+                   id="mail" maxlength="256" required>
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="mdp_id1">Ancien mot de passe&#42; : </label>
-            <input class="InputAddOn-field" type="password" name="ancienMDP" id="mdp_id1"
+            <input class="InputAddOn-field" type="password" name="ancienMDP" id="mdp_id1" maxlength="256"
                    required>
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="mdp_id2">Mot de passe&#42; : </label>
-            <input class="InputAddOn-field" type="password" name="mdp" id="mdp_id2" required>
+            <input class="InputAddOn-field" type="password" name="mdp" id="mdp_id2" maxlength="256" required>
 
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="mdp2_id">Vérification du mot de passe&#42; : </label>
-            <input class="InputAddOn-field" type="password" name="mdp2" id="mdp2_id" required>
+            <input class="InputAddOn-field" type="password" name="mdp2" id="mdp2_id" maxlength="256" required>
         </p>';
 
         if (ConnexionUtilisateur::estAdministrateur()) {

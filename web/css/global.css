@@ -449,6 +449,7 @@ a.vote:hover img {
         width: 100%;
     }
 
+
     #suivant {
         margin: 10px 20px 10px 50px;
     }
@@ -856,6 +857,15 @@ div p {
     display: block;
 }
 
+#detail_section{
+    width: 90% !important;
+    background: #dff5f4;
+    padding: 10px;
+    text-align: center;
+}
+#description{
+    word-wrap: break-word;
+}
 
 .vertical-line {
     display: block;
@@ -961,6 +971,7 @@ input, textarea {
 
 
 .link-custom {
+    font-size: 18px;
     position: relative;
 }
 
@@ -1149,6 +1160,7 @@ select {
 }
 
 .messageInfo {
+    border: 1px rgba(255, 255, 255, 0.51) solid;
     margin-left: 15px;
     max-width: 550px;
 }
@@ -1177,4 +1189,8 @@ input {
     display-inside: ruby-text;
     float: right;
     display: flex;
+}
+
+.delete:hover, .modifier:hover {
+   width: 26px;
 }

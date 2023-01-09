@@ -20,7 +20,7 @@ $nbSection = $_SESSION[FormConfig::$arr]['nbSections'];
 <h1>Organisation des sections</h1>
 
 
-<form method=post class = "custom-form">
+<form method=post class="custom-form">
 
 
     <?php
@@ -33,18 +33,18 @@ $nbSection = $_SESSION[FormConfig::$arr]['nbSections'];
     for ($i = 1; $i <= $nb; $i++) {
         echo '  
                 <h2>Section n°' . $i . '</h2>
-                <p>
-                    <label>Titre :</label>
-                    <input type="text" class="titreForm" name=titre' . $i . '  size="77" maxlength="70"
+                <p  class="InputAddOn">
+                    <label class="InputAddOn-item">Titre :</label>
+                    <input class="InputAddOn-field" type="text" name=titre' . $i . '  size="50" maxlength="70" style="min-width: 40%"
                     value = "' . FormConfig::TextField('titre' . $i) . '" 
                     required>
                     <label class="maximum">70 caractères maximum</label>
                 </p>
-                <p class ="champ">
-                    <label>Description :</label>
-                    <textarea maxlength="350" name=description' . $i . ' rows="7" cols="50" required id = "ta'.$i.'">' . FormConfig::TextField('description' . $i) . '</textarea>
+                <p>
+                    <label class="InputAddOn-item" >Description :</label>
+                    <textarea  maxlength="350" name=description' . $i . ' rows="7" cols="50" required id = "ta' . $i . '">' . FormConfig::TextField('description' . $i) . '</textarea>
                     <script>
-                         const easyMDE'.$i.' = new createMarkdownEditor({forceSync: true, element: document.getElementById("ta'.$i.'")});
+                         const easyMDE' . $i . ' = new createMarkdownEditor({forceSync: true, element: document.getElementById("ta' . $i . '")});
                     </script>
                     <label class="maximum">350 caractères maximum</label>
                </p>';
@@ -53,5 +53,5 @@ $nbSection = $_SESSION[FormConfig::$arr]['nbSections'];
     ?>
 
     <input type="submit" name=previous value="Retour" id="precedent" class="nav" formnovalidate>
-    <input type="submit" name=next value="Suivant" id="suivant"  class="nav">
+    <input type="submit" name=next value="Suivant" id="suivant" class="nav">
 </form>

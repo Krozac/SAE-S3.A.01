@@ -3,30 +3,29 @@
         <h2 style="color: #022234">Formulaire d'inscription :</h2>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="username">Identifiant&#42; : </label>
-            <input class="InputAddOn-field" type="text" placeholder="" name="identifiant" id="username" required>
+            <input class="InputAddOn-field" maxlength="30" type="text" placeholder="" name="identifiant" id="username" required>
 
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="lastname">Nom&#42; : </label>
-            <input class="InputAddOn-field" type="text" placeholder="" name="nom" id="lastname" required>
+            <input class="InputAddOn-field" maxlength="30" type="text" placeholder="" name="nom" id="lastname" required>
 
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="firstname">Prénom&#42; : </label>
-            <input class="InputAddOn-field" type="text" placeholder="" name="prenom" id="firstname" required>
+            <input class="InputAddOn-field" maxlength="30" type="text" placeholder="" name="prenom" id="firstname" required>
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="mdp_id">Mot de passe&#42; : </label>
-            <input class="InputAddOn-field" type="password" value="" placeholder="" name="mdp" id="mdp_id" required>
-
+            <input class="InputAddOn-field" maxlength="256" type="password" value="" placeholder="" name="mdp" id="mdp_id" required>
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="mdp2_id">Vérification du mot de passe&#42; : </label>
-            <input class="InputAddOn-field" type="password" value="" placeholder="" name="mdp2" id="mdp2_id" required>
+            <input class="InputAddOn-field" maxlength="256" type="password" value="" placeholder="" name="mdp2" id="mdp2_id" required>
         </p>
         <p class="InputAddOn">
             <label class="InputAddOn-item" for="email_id">Email&#42; : </label>
-            <input class="InputAddOn-field" type="email" value="" placeholder="toto@yopmail.com" name="email"
+            <input class="InputAddOn-field" maxlength="256" type="email" value="" placeholder="toto@yopmail.com" name="email"
                    id="email_id" required>
         </p>
         <?php

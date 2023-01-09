@@ -5,6 +5,7 @@ namespace App\Vote\Controller;
 use App\Vote\Lib\ConnexionUtilisateur;
 use App\Vote\Config\FormConfig;
 use App\Vote\Lib\MessageFlash;
+use App\Vote\Lib\MotDePasse;
 use App\Vote\Model\DataObject\Calendrier;
 use App\Vote\Model\DataObject\CoAuteur;
 use App\Vote\Model\DataObject\Proposition;
@@ -37,7 +38,7 @@ class ControllerProposition
             vous n'êtes pas responsable pour cette question.");
             $bool = false;
         }
-        if ($question->getPhase() != 'ecriture') {
+        if ($question->getPhase() != 'ecriture' || $question->aPassePhase()) {
             MessageFlash::ajouter("danger", "Vous ne pouvez pas créer de proposition en dehors 
             de la phase d'écriture.");
             $bool = false;
@@ -75,7 +76,7 @@ class ControllerProposition
                     $keyword = $_POST['keyword'];
                     $utilisateurs = (new UtilisateurRepository())->selectKeywordUtilisateur($keyword);
                     $params['utilisateurs'] = $utilisateurs;
-                } else{
+                } else {
                     $utilisateurs = (new UtilisateurRepository())->selectAll();
                     $params['utilisateurs'] = $utilisateurs;
                 }
@@ -164,7 +165,7 @@ class ControllerProposition
             vous n'êtes pas responsable pour cette question.");
             $bool = false;
         }
-        if ($question->getPhase() != 'ecriture') {
+        if ($question->getPhase() != 'ecriture' || $question->aPassePhase()) {
             MessageFlash::ajouter("danger", "Vous ne pouvez pas créer de proposition en dehors de la phase d'écriture.");
             $bool = false;
         }
@@ -192,7 +193,7 @@ class ControllerProposition
         }
         $sections = $question->getSections();
         foreach ($sections as $section) {
-            if (strlen($_SESSION[FormConfig::$arr]['contenu' . $section->getId()]) > 1400) {
+            if (strlen($_SESSION[FormConfig::$arr]['contenu' . $section->getId()]) > 1500) {
                 MessageFlash::ajouter("danger", "Vous n'avez pas respecté les contraintes.");
                 Controller::redirect("index.php?controller=question&action=readAll");
             }
@@ -283,12 +284,20 @@ class ControllerProposition
             MessageFlash::ajouter("warning", "Vous ne pouvez pas modifier cette proposition en dehors de la phase d'écriture.");
             $bool = false;
         }
+        if (strlen($_SESSION[FormConfig::$arr]['titre']) > 480) {
+            MessageFlash::ajouter("danger", "Vous n'avez pas respecté les contraintes.");
+            $bool = false;
+        }
         if (!$bool) {
             Controller::redirect("index.php?controller=proposition&action=readAll");
         } else {
             $sections = $question->getSections();
             (new PropositionSectionRepository())->delete($_SESSION[FormConfig::$arr]["idProposition"]);
             foreach ($sections as $section) {
+                if (strlen($_SESSION[FormConfig::$arr]['contenu' . $section->getId()]) > 1500) {
+                    MessageFlash::ajouter("danger", "Vous n'avez pas respecté les contraintes.");
+                    Controller::redirect("index.php?controller=question&action=readAll");
+                }
                 $propositionSection = new PropositionSection((new PropositionRepository())->select($_SESSION[FormConfig::$arr]["idProposition"]), $section, $_SESSION[FormConfig::$arr]['contenu' . $section->getId()]);
                 (new PropositionSectionRepository())->sauvegarder($propositionSection);
             }
@@ -338,13 +347,20 @@ class ControllerProposition
             Controller::afficheVue('view.php', ["pagetitle" => "Supprimer proposition",
                 "cheminVueBody" => "confirm.php",
                 "message" => "Êtes vous sûr de vouloir supprimer cette proposition?",
+                "mdp" => true,
                 "url" => 'index.php?controller=proposition&action=delete&idProposition=' . $_GET['idProposition']]);
         } else if (isset($_POST["cancel"])) {
             Controller::redirect('index.php?controller=question&action=readAll');
         } else if (isset($_POST["confirm"])) {
-            (new PropositionRepository())->delete($_GET['idProposition']);
-            MessageFlash::ajouter('success', 'La proposition a bien été supprimée');
-            Controller::redirect("index.php?controller=question&action=readAll");
+            $utilisateur = (new UtilisateurRepository())->select(ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            if (!MotDePasse::verifier($_POST['mdp'], $utilisateur->getMdpHache())) {
+                MessageFlash::ajouter('warning', 'Mot de passe incorrect.');
+                Controller::redirect('index.php?controller=proposition&action=delete&idProposition=' . $_GET['idProposition']);
+            } else {
+                (new PropositionRepository())->delete($_GET['idProposition']);
+                MessageFlash::ajouter('success', 'La proposition a bien été supprimée');
+                Controller::redirect("index.php?controller=question&action=readAll");
+            }
         }
     }
 

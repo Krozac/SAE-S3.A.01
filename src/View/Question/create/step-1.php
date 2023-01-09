@@ -37,15 +37,15 @@ if (isset($_POST['Titre'])) {
 
 <form method="post" class = "custom-form">
 
-    <p>
-        <label for="titre_id">Titre : </label>
-        <input class="titreForm" type="text" placeholder="L'oeuf ou la poule ? " size="65" maxlength="70" name="Titre" id="titre_id"
+    <p class="InputAddOn">
+        <label class="InputAddOn-item" for="titre_id">Titre : </label>
+        <input type="text" placeholder="L'oeuf ou la poule ? " size="70" maxlength="70" name="Titre" id="titre_id"
                value="<?= FormConfig::TextField('Titre') ?>"
                required>
         <label class="maximum">70 caractères maximum</label>
     </p>
     <p class ="champ">
-        <label for="description_id">Description : </label>
+        <label class="InputAddOn-item" for="description_id">Description : </label>
         <textarea id="description_id" maxlength="350" name="Description" rows="7" cols="50" required><?= FormConfig::TextField('Description'); ?></textarea>
         <script>
             const easyMDE = new createMarkdownEditor({ forceSync: true});

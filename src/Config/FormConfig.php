@@ -3,6 +3,7 @@
 namespace App\Vote\Config;
 
 use App\Vote\Model\DataObject\PropositionSection;
+use App\Vote\Model\DataObject\Question;
 use App\Vote\Model\HTTP\Session;
 use App\Vote\Model\Repository\PropositionRepository;
 
@@ -51,7 +52,7 @@ class FormConfig
         }
     }
 
-    static public function initialiserSessions($question): void
+    static public function initialiserSessions(Question $question): void
     {
         $calendriers = $question->getCalendrier(true);
         $tabSections = $question->getSections();
@@ -85,6 +86,8 @@ class FormConfig
         foreach ($votants as $votant) {
             $_SESSION[FormConfig::$arr]['votants'][] = $votant->getIdentifiant();
         }
+        $_SESSION[FormConfig::$arr]['systemeVote'] = $question->getSystemeVote();
+
     }
 
     static public function initialiserSessionsProposition($proposition): void

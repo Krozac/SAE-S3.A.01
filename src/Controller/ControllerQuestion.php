@@ -6,6 +6,7 @@ namespace App\Vote\Controller;
 use App\Vote\Lib\ConnexionUtilisateur;
 use App\Vote\Config\FormConfig;
 use App\Vote\Lib\MessageFlash;
+use App\Vote\Lib\MotDePasse;
 use App\Vote\Model\DataObject\Calendrier;
 use App\Vote\Model\DataObject\Question;
 use App\Vote\Model\DataObject\Responsable;
@@ -423,13 +424,20 @@ class ControllerQuestion
             Controller::afficheVue('view.php', ["pagetitle" => "Demande de confirmation",
                 "cheminVueBody" => "confirm.php",
                 "message" => "Êtes vous sûr de vouloir supprimer cette question?",
+                "mdp" => true,
                 "url" => 'index.php?action=delete&controller=question&idQuestion=' . $_GET['idQuestion']]);
         } else if (isset($_POST["cancel"])) {
             Controller::redirect('index.php?controller=question&action=readAll');
         } else if (isset($_POST["confirm"])) {
-            (new QuestionRepository())->delete($_GET['idQuestion']);
-            MessageFlash::ajouter('success', 'La question a bien été supprimée');
-            Controller::redirect("index.php?controller=question&action=readAll");
+            $utilisateur = (new UtilisateurRepository())->select(ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            if (!MotDePasse::verifier($_POST['mdp'], $utilisateur->getMdpHache())) {
+                MessageFlash::ajouter('warning', 'Mot de passe incorrect.');
+                Controller::redirect('index.php?action=delete&controller=question&idQuestion=' . $_GET['idQuestion']);
+            } else {
+                (new QuestionRepository())->delete($_GET['idQuestion']);
+                MessageFlash::ajouter('success', 'La question a bien été supprimée');
+                Controller::redirect("index.php?controller=question&action=readAll");
+            }
         }
     }
 
@@ -468,16 +476,13 @@ class ControllerQuestion
         if (!$bool) {
             Controller::redirect('index.php?controller=question&action=readAll');
         }
+        $propositions = $question->getPropositionsTrie();
 
-        if ($question->getSystemVote() == 'majoritaire') {
-            $propositions = array_keys($question->getPropositionsTrieMajoritaire());
-            $medians = array_values($question->getPropositionsTrieMajoritaire());
+        if ($question->getSystemeVote() == 'majoritaire') {
             Controller::afficheVue('view.php', ['pagetitle' => 'Page de résultat',
                 'cheminVueBody' => "Question/resultatMajoritaire.php",
-                'propositions' => $propositions,
-                'medians' => $medians]);
+                'propositions' => $propositions]);
         } else {
-            $propositions = $question->getPropositionsTrie();
             Controller::afficheVue('view.php', ['pagetitle' => 'Page de résultat',
                 'cheminVueBody' => "Question/resultat.php",
                 'propositions' => $propositions]);
