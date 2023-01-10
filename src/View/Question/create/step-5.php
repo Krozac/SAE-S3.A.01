@@ -26,8 +26,12 @@ if (isset($_POST['next'])) {
 function adduser(string $id): void
 {
     if (!in_array($id, $_SESSION[FormConfig::$arr][$_SESSION[FormConfig::$arr]['type']])) {
-        $_SESSION[FormConfig::$arr][$_SESSION[FormConfig::$arr]['type']][] = $id;
-    } else {
+        if(ConnexionUtilisateur::getLoginUtilisateurConnecte() == $id){
+            MessageFlash::ajouter('warning', "Vous ne pouvez pas etre votant sur votre propre question");
+        }else {
+            $_SESSION[FormConfig::$arr][$_SESSION[FormConfig::$arr]['type']][] = $id;
+        }
+    } else{
         MessageFlash::ajouter('warning', "Cet utilisateur est déjà sélectionné en tant que votant");
     }
 }

@@ -161,6 +161,16 @@ class Question extends AbstractDataObject
         return $propositions;
     }
 
+    public function getCoAuteurs(): array
+    {
+        $coAuts = array();
+        $propositions = $this->getPropositions();
+        foreach ($propositions as $prop){
+            $coAuts[] = $prop->getCoAuteurs();
+        }
+        return $coAuts;
+    }
+
     public function getPropositionsNonEliminees(array $propositions): array
     {
         //prend en paramètre un tableau de propositions et retourne un tableau

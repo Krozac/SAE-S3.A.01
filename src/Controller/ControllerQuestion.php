@@ -119,17 +119,26 @@ class ControllerQuestion
                 $view = "step-3";
                 break;
             case 4:
+                $coAuts = array();
+                if(isset($_SESSION["SessionQuestion"]["idQuestion"])){
+                    $question = (new QuestionRepository())->select($_SESSION["SessionQuestion"]["idQuestion"]);
+                    foreach($question->getCoAuteurs() as $coAut){
+                        $coAuts[] = $coAut->getUtilisateur()->getIdentifiant();
+                    }
+                }
+
                 // Si les variables POST row et keyword sont définies et que la variable row n'est pas vide,
                 // récupère la variable utilisateurs et la définit dans le tableau de paramètres
                 if (isset($_POST["row"]) && isset($_POST["keyword"])) {
                     $row = $_POST['row'];
                     $keyword = $_POST['keyword'];
                     $utilisateurs = (new UtilisateurRepository())->selectKeywordUtilisateur($keyword);
-                    $params['utilisateurs'] = $utilisateurs;
                 } else {
                     $utilisateurs = (new UtilisateurRepository())->selectAll();
-                    $params['utilisateurs'] = $utilisateurs;
                 }
+                $params['utilisateurs'] = $utilisateurs;
+                $params['coAuts'] = $coAuts;
+
                 $view = "step-4";
                 break;
             case 5:

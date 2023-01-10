@@ -35,7 +35,17 @@ if (array_key_exists('delete', $_POST)) {
 function adduser(string $id): void
 {
     if (!in_array($id, $_SESSION[FormConfig::$arr][$_SESSION[FormConfig::$arr]['type']])) {
-        $_SESSION[FormConfig::$arr][$_SESSION[FormConfig::$arr]['type']][] = $id;
+        if(ConnexionUtilisateur::getLoginUtilisateurConnecte() == $id){
+            MessageFlash::ajouter('warning', "Vous ne pouvez pas etre co-auteurs sur votre propre proposition");
+        }else if(isset($resps) && in_array($id,$resps)){
+            MessageFlash::ajouter('warning', "Cet utilisateur est déjà sélectionné en tant que responsable de la question");
+        }else if(isset($coAuts) && in_array($id,$coAuts)){
+            MessageFlash::ajouter('warning', "Cet utilisateur est déjà sélectionné en tant que co-auteur sur une autre proposition");
+        }else{
+            $_SESSION[FormConfig::$arr][$_SESSION[FormConfig::$arr]['type']][] = $id;
+        }
+    } else{
+        MessageFlash::ajouter('warning', "Cet utilisateur est déjà sélectionné en tant que co-auteur");
     }
 }
 

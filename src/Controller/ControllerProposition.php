@@ -71,15 +71,29 @@ class ControllerProposition
                 $view = "step-1";
                 break;
             case 2:
+                $coAuts = array();
+                $resps = array();
+
+                if(!is_null($question)){
+                    foreach ($question->getResponsables() as $resp){
+                        $resps[] = $resp->getIdentifiant();
+                    }
+                    foreach($question->getCoAuteurs() as $coAut){
+                        $coAuts[] = $coAut->getUtilisateur()->getIdentifiant();
+                    }
+                }
+
                 if (isset($_POST["row"]) && isset($_POST["keyword"]) && "row" != "") {
                     $row = $_POST['row'];
                     $keyword = $_POST['keyword'];
                     $utilisateurs = (new UtilisateurRepository())->selectKeywordUtilisateur($keyword);
-                    $params['utilisateurs'] = $utilisateurs;
                 } else {
                     $utilisateurs = (new UtilisateurRepository())->selectAll();
-                    $params['utilisateurs'] = $utilisateurs;
                 }
+                $params['utilisateurs'] = $utilisateurs;
+                $params['$resps'] = $resps;
+                $params['coAuts'] = $coAuts;
+
                 $view = "step-2";
                 break;
         }
