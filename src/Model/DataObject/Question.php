@@ -166,7 +166,7 @@ class Question extends AbstractDataObject
         $coAuts = array();
         $propositions = $this->getPropositions();
         foreach ($propositions as $prop){
-            $coAuts[] = $prop->getCoAuteurs();
+            $coAuts = array_merge($coAuts, $prop->getCoAuteurs());
         }
         return $coAuts;
     }
