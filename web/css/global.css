@@ -857,6 +857,10 @@ div p {
     display: block;
 }
 
+.info_question {
+    margin-left: 5%;
+}
+
 #detail_section{
     width: 90% !important;
     background: #dff5f4;

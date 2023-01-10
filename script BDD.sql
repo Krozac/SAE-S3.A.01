@@ -50,19 +50,19 @@ create or replace table Calendriers
     idQuestion    int                                   null,
     idCalendrier  int auto_increment
     primary key,
-    debutecriture timestamp default current_timestamp() not null,
-    finecriture   timestamp default current_timestamp() not null,
+    debutecriture timestamp                             null,
+    finecriture   timestamp                             null,
     debutvote     timestamp default current_timestamp() not null,
     finvote       timestamp default current_timestamp() not null,
     constraint Calendriers_Questions_null_fk
     foreign key (idQuestion) references Questions (idquestion)
     on update cascade on delete cascade,
     constraint check_date_2phases
-    check (`finecriture` <= `debutvote`),
+    check (`finecriture` <= `debutvote` or `finecriture` is null),
     constraint check_date_vote
     check (`debutvote` < `finvote`),
     constraint date_check_ecriture
-    check (`debutecriture` < `finecriture`)
+    check (`debutecriture` < `finecriture` or `debutecriture` is null)
 );
 
 create or replace table Responsables
@@ -80,12 +80,13 @@ create or replace table Responsables
 
 create or replace table Propositions
 (
-    idquestion    int           not null,
-    idresponsable varchar(30)   not null,
-    titre         varchar(500)  null,
+    idquestion    int                  not null,
+    idresponsable varchar(30)          not null,
+    titre         varchar(500)         null,
     idproposition int auto_increment,
-    nbetoiles     int default 0 null,
-    nbvotes       int default 0 not null,
+    nbetoiles     int        default 0 null,
+    nbvotes       int        default 0 not null,
+    estEliminee   tinyint(1) default 0 null,
     primary key (idquestion, idresponsable),
     constraint Propositions_pk
     unique (idproposition),
@@ -203,61 +204,41 @@ UPDATE Propositions
 SET nbvotes = nbvotes + 1
 WHERE idproposition = NEW.idProposition;
 
-create or replace definer = dimeckr@`%` view dimeckr.questions_ecriture as
+create or replace definer = dimeckr@`%` view questions_ecriture as
 select `q`.`idquestion`     AS `idquestion`,
        `q`.`titre`          AS `titre`,
        `q`.`description`    AS `description`,
        `q`.`idorganisateur` AS `idorganisateur`,
-       `c`.`idcalendrier`   AS `idcalendrier`,
+       `c`.`idCalendrier`   AS `idcalendrier`,
        `q`.`creation`       AS `creation`,
-       `q`.`systemeVote`       AS `systemeVote`
-from (`dimeckr`.`Questions` `q` join `dimeckr`.`Calendriers` `c` on (`c`.`idquestion` = `q`.`idquestion`))
-where (`c`.`idCalendrier` = (SELECT dimeckr.getCurrentCalendar(`q`.`idquestion`)))
+       `q`.`systemeVote`    AS `systemeVote`
+from (`dimeckr`.`Questions` `q` join `dimeckr`.`Calendriers` `c` on (`c`.`idQuestion` = `q`.`idquestion`))
+where `c`.`idCalendrier` = (select `dimeckr`.`getCurrentCalendar`(`q`.`idquestion`))
   and (select current_timestamp() AS `current_timestamp`) < `c`.`finecriture`
-  AND (select current_timestamp() AS `current_timestamp`) > `c`.`debutecriture`;
+  and (select current_timestamp() AS `current_timestamp`) > `c`.`debutecriture`;
 
-create or replace definer = dimeckr@`%` view dimeckr.questions_termines as
+create or replace definer = dimeckr@`%` view questions_termines as
 select `q`.`idquestion`     AS `idquestion`,
        `q`.`titre`          AS `titre`,
        `q`.`description`    AS `description`,
        `q`.`idorganisateur` AS `idorganisateur`,
-       `c`.`idcalendrier`   AS `idcalendrier`,
+       `c`.`idCalendrier`   AS `idcalendrier`,
        `q`.`creation`       AS `creation`,
-       `q`.`systemeVote`       AS `systemeVote`
-from (`dimeckr`.`Questions` `q` join `dimeckr`.`Calendriers` `c` on (`c`.`idquestion` = `q`.`idquestion`))
-where (`c`.`idCalendrier` = (SELECT dimeckr.getCurrentCalendar(`q`.`idquestion`)))
+       `q`.`systemeVote`    AS `systemeVote`
+from (`dimeckr`.`Questions` `q` join `dimeckr`.`Calendriers` `c` on (`c`.`idQuestion` = `q`.`idquestion`))
+where `c`.`idCalendrier` = (select `dimeckr`.`getCurrentCalendar`(`q`.`idquestion`))
   and (select current_timestamp() AS `current_timestamp`) > `c`.`finvote`;
 
-create or replace definer = dimeckr@`%` view dimeckr.questions_vote as
+create or replace definer = dimeckr@`%` view questions_vote as
 select `q`.`idquestion`     AS `idquestion`,
        `q`.`titre`          AS `titre`,
        `q`.`description`    AS `description`,
        `q`.`idorganisateur` AS `idorganisateur`,
-       `c`.`idcalendrier`   AS `idcalendrier`,
+       `c`.`idCalendrier`   AS `idcalendrier`,
        `q`.`creation`       AS `creation`,
-       `q`.`systemeVote`       AS `systemeVote`
-from (`dimeckr`.`Questions` `q` join `dimeckr`.`Calendriers` `c` on (`c`.`idquestion` = `q`.`idquestion`))
-where (`c`.`idCalendrier` = (SELECT dimeckr.getCurrentCalendar(`q`.`idquestion`)))
-  and(select current_timestamp() AS `current_timestamp`) > `c`.`debutvote`
+       `q`.`systemeVote`    AS `systemeVote`
+from (`dimeckr`.`Questions` `q` join `dimeckr`.`Calendriers` `c` on (`c`.`idQuestion` = `q`.`idquestion`))
+where `c`.`idCalendrier` = (select `dimeckr`.`getCurrentCalendar`(`q`.`idquestion`))
+  and (select current_timestamp() AS `current_timestamp`) > `c`.`debutvote`
   and (select current_timestamp() AS `current_timestamp`) < `c`.`finvote`;
-
-
-
-
-
-
-
-
-CREATE OR replace FUNCTION dimeckr.getCurrentCalendar(idquestion int) RETURNS INT
-BEGIN
-DECLARE id int;
-    SELECT idCalendrier INTO id
-        FROM dimeckr.Calendriers c 
-        WHERE c.idQuestion = idquestion 
-        AND c.debutecriture < (SELECT CURRENT_TIMESTAMP())
-        AND c.finvote > (SELECT CURRENT_TIMESTAMP());
-    return id;
-END;
-/
-
 

@@ -1,7 +1,7 @@
 <div class="detail_question ">
     <div class="infos">
 
-        <div class="detail_question ">
+        <div class="info_question ">
             <h1><strong class="custom_strong color-blue">Titre :</strong></h1>
             <p> <?= htmlspecialchars($question->getTitre()) ?></p>
 

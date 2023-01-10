@@ -40,7 +40,7 @@ if (count($_SESSION[FormConfig::$arr]['Sections']) > $_SESSION[FormConfig::$arr]
 ?>
 <div class="detail_question ">
     <div class="infos">
-        <div class="detail_question ">
+        <div class="info_question ">
             <h1><strong class='custom_strong color-blue'>Titre</strong></h1>
             <p><?= htmlspecialchars($Titre) ?></p>
             <h1><strong class='custom_strong color-blue'>Description</strong></h1>

@@ -191,7 +191,6 @@ class ControllerQuestion
             Controller::redirect("index.php?action=readAll&controller=question");
         }
         FormConfig::setArr('SessionQuestion');
-        $nbCalendriers = $_SESSION[FormConfig::$arr]['nbCalendriers'];
 
         $creation = date("Y/m/d H:i:s");
         $organisateur = (new UtilisateurRepository)->select(ConnexionUtilisateur::getLoginUtilisateurConnecte());
@@ -225,6 +224,10 @@ class ControllerQuestion
         }
 
         $sections = $_SESSION[FormConfig::$arr]['Sections'];
+        if (sizeof($sections) > 10) {
+            MessageFlash::ajouter('danger', 'Le nombre de section est invalide');
+            Controller::redirect("index.php?action=form&controller=question&step=3");
+        }
         foreach ($sections as $value) {
             $section = new Section($value['titre'], $value['description'], $question);
             if (strlen($value['titre']) > 80 || strlen($value['description']) > 360) {
@@ -305,18 +308,17 @@ class ControllerQuestion
             MessageFlash::ajouter("danger", "Vous ne pouvez pas modifier une question dont vous n'êtes par l'organisateur.");
             $bool = false;
         }
-        self::verifBD($question);
         if (!$bool) {
             Controller::redirect("index.php?action=readAll&controller=question");
         }
         FormConfig::setArr('SessionQuestion');
-        $question->setTitre($_SESSION[FormConfig::$arr]['Titre']);
-        $question->setDescription($_SESSION[FormConfig::$arr]['Description']);
-        (new QuestionRepository())->update($question);
-
         foreach ($question->getCalendrier(true) as $calendrier) {
             (new CalendrierRepository())->delete($calendrier->getId());
         }
+        self::verifBD($question);
+        $question->setTitre($_SESSION[FormConfig::$arr]['Titre']);
+        $question->setDescription($_SESSION[FormConfig::$arr]['Description']);
+        (new QuestionRepository())->update($question);
 
 
         $ancSections = $question->getSections();
@@ -518,6 +520,10 @@ class ControllerQuestion
             Controller::redirect("index.php?action=form&controller=question&step=5");
         }
         $nbCalendriers = $_SESSION[FormConfig::$arr]['nbCalendriers'];
+        if ($nbCalendriers > 7) {
+            MessageFlash::ajouter("danger", "Le nombre de calendrier est invalide");
+            Controller::redirect("index.php?action=form&controller=question&step=2");
+        }
 
         for ($i = 1; $i <= $nbCalendriers; $i++) {
             $calendrier = new Calendrier($question, FormConfig::TextField('debutEcriture' . $i), FormConfig::TextField('finEcriture' . $i),
@@ -531,7 +537,7 @@ class ControllerQuestion
                 MessageFlash::ajouter("danger", "Les contraintes du calendrier n'ont pas été respectées.");
                 Controller::redirect("index.php?action=form&controller=question&step=2");
             }
-            if ($i < $nbCalendriers && $calendrier->getFinVote() > FormConfig::TextField('debutEcriture' . $i + 1)) {
+            if ($i < $nbCalendriers && $calendrier->getFinVote(true) > FormConfig::TextField('debutEcriture' . $i + 1)) {
                 MessageFlash::ajouter("danger", "Les contraintes du calendrier n'ont pas été respectées.");
                 Controller::redirect("index.php?action=form&controller=question&step=2");
             }
